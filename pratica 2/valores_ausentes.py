@@ -47,8 +47,10 @@ def preenche_ausentes(arquivo,coluna,separador,valor_estimado):
     out_file.close()
 
 def main():
+    # variaveis de entrada
     arquivo = "teste.csv"   # arquivo de entrada
     coluna = 2   # indice da coluna com valores ausentes
+    
     separador = ","   # caractere que separa os atributos
 
     media = calcula_media(arquivo,coluna,separador)
