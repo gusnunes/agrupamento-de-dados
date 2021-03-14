@@ -1,0 +1,2 @@
+O parâmetro "separador" da função "preenche_ausentes" é utilizado como o delimitador do .csv, tem valor default ","
+Para utilizar um valor diferente, é necessário passar um argumento nomeado para a função, por exemplo, preenche_ausentes(arquivo,coluna,separador=';')
