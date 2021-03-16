@@ -1,24 +1,26 @@
 import random
 
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
+def n_linhas_arq(arquivo):
+    with open(arquivo) as f:
+        for i, _ in enumerate(f):
             pass
     return i + 1
 
-def remove_valores(arquivo, coluna, num_linhas, separador, char_vazio):
-    f = open(arquivo, "r")
-    tamanho_arquivo = file_len(arquivo)
+def remove_valores(arquivo, coluna, num_linhas, separador, char_vazio, possui_cabecalho):
 
-    if(tamanho_arquivo <= num_linhas):
-        raise RuntimeError(f"O arquivo possui menos de {num_linhas} linhas.")
+    tamanho_cabecalho = 1 if possui_cabecalho else 0
+    f = open(arquivo, "r")
+    tamanho_arquivo = n_linhas_arq(arquivo)
+
+    if(tamanho_arquivo-tamanho_cabecalho <= num_linhas):
+        raise RuntimeError(f"O arquivo possui menos que {num_linhas} linhas de dados.")
     
     linhas_apagadas = set()
 
     while(len(linhas_apagadas) < num_linhas):
-        linhas_apagadas.add(random.randint(1, tamanho_arquivo))
+        linhas_apagadas.add(random.randint(tamanho_cabecalho, tamanho_arquivo))
     linhas_apagadas = sorted(linhas_apagadas)
-    linha_atual = 1
+    linha_atual = 0
     index_linhas_apagadas = 0
 
     with open(arquivo.split('.')[0]+"_modificado."+arquivo.split('.')[1], "w") as f_modificado:
@@ -42,8 +44,13 @@ if __name__ == '__main__':
     num_linhas = int(input("Quantas linhas devem ser removidas? "))
     separador = input("Qual o separador usado? ")
     char_vazio = input("Insira a representação a ser usada nos valores vazios: ")
+    possui_cabecalho_char = input("O arquivo possui cabeçalho? [S/N] ").capitalize()[0]
 
-    if(remove_valores(arquivo, coluna, num_linhas, separador, char_vazio)):
+    if(possui_cabecalho_char != 'S' and possui_cabecalho_char != 'N'):
+        raise RuntimeError("Responda 'S' ou 'N' para \"O arquivo possui cabeçalho? [S/N]\".")
+    possui_cabecalho = True if possui_cabecalho_char=='S' else False    
+
+    if(remove_valores(arquivo, coluna, num_linhas, separador, char_vazio, possui_cabecalho)):
         print(f"O resultado da modificação está em {arquivo.split('.')[0]}_modificado.{arquivo.split('.')[1]}")
 
 
