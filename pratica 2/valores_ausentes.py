@@ -1,3 +1,5 @@
+import argparse
+
 def eh_numero(valor):
     try:
         float(valor)
@@ -53,24 +55,15 @@ def preenche_ausentes(arquivo,coluna,separador,valor_estimado,possui_cabecalho):
     out_file.close()
 
 def main():
+ 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--separador", dest='separador', help="Separador de colunas", default=',')
+    parser.add_argument("-c", "--cabecalho", dest='cabecalho', help="Indica se o arquivo possui cabeçalho [True, False]", default='True', choices=['True', 'False'])
+    args = parser.parse_args()
     arquivo = input("Digite o nome do arquivo: ")
     coluna = int(input("Digite a coluna a ser alterada [1,INF]: "))
-    separador = input("Qual o separador usado? ")
-    possui_cabecalho_char = input("O arquivo possui cabeçalho? [S/N] ").capitalize()[0]
-
-    if(possui_cabecalho_char != 'S' and possui_cabecalho_char != 'N'):
-        raise RuntimeError("Responda 'S' ou 'N' para \"O arquivo possui cabeçalho? [S/N]\".")
-    possui_cabecalho = True if possui_cabecalho_char=='S' else False
-
-    '''
-    # variaveis de entrada
-    arquivo = "teste.csv"   # arquivo de entrada
-    coluna = 2   # indice da coluna com valores ausentes
-    
-    separador = ","   # caractere que separa os atributos
-    '''
-
-    media = calcula_media(arquivo,coluna,separador, possui_cabecalho)
-    preenche_ausentes(arquivo,coluna,separador,media, possui_cabecalho)
+    possui_cabecalho = (args.cabecalho == 'True')
+    media = calcula_media(arquivo,coluna,args.separador, possui_cabecalho)
+    preenche_ausentes(arquivo,coluna,args.separador,media, possui_cabecalho)
 
 main()
