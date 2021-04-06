@@ -39,7 +39,6 @@ def calcula_matriz_distancia(in_df,out_df,tamanho):
       out_df.loc[x,y] = distancia
       out_df.loc[y,x] = distancia   # matriz é espelhada
   
-
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("-i", "--input", dest='arquivo', help="Arquivo de entrada", required=True)
@@ -53,16 +52,16 @@ def main():
   
   # DataFrame de entrada com os objetos
   in_df = pd.read_csv(arquivo, header=possui_cabecalho)
+  
+  # remove as colunas não numéricas
+  in_df = in_df.select_dtypes(['number'])   
+
+  # reorganiza os indices das colunas (serão números inteiros)
   qtd_linhas, qtd_colunas = in_df.shape
+  in_df.columns = [int(indice) for indice in range(0,qtd_colunas)]
 
   # DataFrame de saida (conterá a matriz de distancias)
   out_df = pd.DataFrame(index=np.arange(qtd_linhas), columns=np.arange(qtd_linhas))
-
-  # remove as colunas não numéricas
-  in_df = in_df.select_dtypes(['number'])   
-  
-  # reorganiza os indices das colunas (serão números inteiros)
-  in_df.columns = [int(indice) for indice in range(0,qtd_colunas)]
 
   calcula_matriz_distancia(in_df, out_df, qtd_linhas)
   write_file(out_df, args.nome_arquivo_saida)
