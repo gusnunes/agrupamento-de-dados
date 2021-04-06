@@ -57,8 +57,8 @@ ou
 
 2 - EXEMPLO DE EXECUÇÃO:
 
-- Abaixo é exemplificado o uso do código para a geração da matriz da base processed.cleveland, 
-e do arquivo 'resultado_cleveland':
+- Abaixo é exemplificado o uso do código para a geração da matriz da base processed.cleveland
+no arquivo 'resultado_cleveland':
 
 ---------------------------------------------------------------------------------------------
 >> python matriz_distancia.py -i 'processed.cleveland.csv' -o 'resultado_cleveland.csv'
