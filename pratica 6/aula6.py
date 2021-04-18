@@ -5,16 +5,17 @@ import numpy as np
 
 def write_file(out_df, nome_arquivo_saida):
   out_df.to_csv(nome_arquivo_saida, header=False,index=False)
+  print("O resultado foi gravado no arquivo", nome_arquivo_saida)
 
-def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0.05):
+def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0):
   total_elementos = data.shape[0]
-  data['cluster'] = [-1 for _ in range(total_elementos)]
   # selecionar k elementos aleatórios
   linhas_selecionadas = []
   while(len(linhas_selecionadas)<kvalue):
     linhas_selecionadas.append(random.randrange(0, total_elementos))
     linhas_selecionadas = list(set(linhas_selecionadas))
   centroides = [data.loc[idx] for idx in linhas_selecionadas]
+  data['cluster'] = [-1 for _ in range(total_elementos)]
   # inicializar os critérios de parada
   limite_convergencia = int(total_elementos*parada_convergencia)
   iteracao_corrente = 0
@@ -23,21 +24,25 @@ def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0.
     numero_objetos_alterados = 0
     # calcula a distância de cada elemento em relação aos k centroides 
     # e classifica de acordo com o mais próximo
-    for _,elemento in data.iterrows():
-      distancias = [distancia_euclidiana(elemento, centroide) for centroide in centroides]
-      #distancias = [sum([(elemento[idx_atributo]-centroide[idx_atributo])**2
-      #          for idx_atributo in range(centroide)])**(1/2) for centroide in centroides]
+    for idx,elemento in data.iterrows():
+      distancias = [distancia_euclidiana(elemento[:-1], centroide) for centroide in centroides]
       centroide_mais_proximo = distancias.index(min(distancias))
       if (elemento['cluster'] != centroide_mais_proximo):
         numero_objetos_alterados += 1
-        elemento['cluster'] = centroide_mais_proximo
+        data.loc[idx, 'cluster'] = centroide_mais_proximo
+    
+    #se alcançar os criterios de parada, encerra sem calcular o novo centroide
+    if(numero_objetos_alterados <= limite_convergencia or iteracao_corrente >= n_iteracoes):
+      break
+
+    print(f'\nIteração {iteracao_corrente}')
     # calcula o novo centroide pela média dos elementos do cluster
     for idx, _ in enumerate(centroides):
-      centroides[idx] = data[data['cluster']==idx].mean()
+      aux = data.loc[data['cluster']==idx].drop('cluster', axis=1)
+      print(f"Cluster {idx} - {aux.shape[0]} elementos")
+      centroides[idx] = aux.mean()
     
     iteracao_corrente += 1
-    if(numero_objetos_alterados > limite_convergencia or iteracao_corrente < n_iteracoes):
-      break
   return data['cluster']
 
 def distancia_euclidiana(x,y):
@@ -45,13 +50,13 @@ def distancia_euclidiana(x,y):
   x = x.reset_index(drop=True)
   y = y.reset_index(drop=True)
 
-  n = x.shape[1]   # n atributos (colunas)
+  n = x.shape[0]   # n atributos (colunas)
   somatorio = 0
 
   for k in range(n):
     # k-esimo atributo dos objetos
-    xk = x.loc[0,k]
-    yk = y.loc[0,k]
+    xk = x.loc[k]
+    yk = y.loc[k]
     
     diferenca = xk - yk
     somatorio += diferenca**2
