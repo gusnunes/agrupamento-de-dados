@@ -7,10 +7,10 @@ Alunos:
 
 1 - COMO EXECUTAR:
 
-No arquivo "aula6.py" está implementada a técnica sobre vista em aula. O código faz uso 
+No arquivo "k-means.py" está implementada a técnica sobre vista em aula. O código faz uso 
 das bibliotecas numpy e pandas, e por isso, a instalação das bibliotecas pode ser necessária. Para 
 executar o código, é necessário abrir o prompt de comando (cmd, powershell ou terminal) e executar 
-o arquivo aula6.py, informando por meio da flag, o nome do arquivo com a base de dados a ser usada 
+o arquivo k-means.py, informando por meio da flag, o nome do arquivo com a base de dados a ser usada 
 e o número de clusters desejado. Como resultado da execução do código, será gerado um arquivo csv.
 Caso o nome do arquivo de saída não seja informado com a flag -o/--output, o resultado será gravado 
 no arquivo 'resultado.csv'. Se necessário, podem ser alteradas as flags do separador de colunas e 
@@ -22,7 +22,7 @@ do cabeçalho, de acordo com a base de dados usada.
 (https://archive.ics.uci.edu/ml/datasets/iris), que possui 3 classes com 50 elementos cada. Uma das 
 classes é separável linearmente, porém as outras duas não são.
 
-- O arquivo 'aula6.py' gera um arquivo que indica para qual cluster cada elemento da base de
+- O arquivo 'k-means.py' gera um arquivo que indica para qual cluster cada elemento da base de
 dados foi mapeado.
 
 1.2 - BIBLIOTECAS:
@@ -50,10 +50,10 @@ ou
 
 2 - EXEMPLO DE EXECUÇÃO:
 
-- Abaixo é exemplificado o uso do código para a geração da matriz da base processed.cleveland
+- Abaixo é exemplificado o uso do código para a geração dos grupos da base iris
 no arquivo 'resultado_iris':
 ---------------------------------------------------------------------------------------------
->> python aula6.py -i 'iris.data' -k 3 -o 'resultado_iris.csv' -c False
+>> python k-means.py -i iris.data -k 3 -o resultado_iris.csv -c False
 Iteração 0
 Cluster 0 - 51 elementos
 Cluster 1 - 46 elementos
