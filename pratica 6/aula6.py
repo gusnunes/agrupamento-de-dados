@@ -9,13 +9,17 @@ def write_file(out_df, nome_arquivo_saida):
 
 def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0):
   total_elementos = data.shape[0]
+  
   # selecionar k elementos aleatórios
   linhas_selecionadas = []
-  while(len(linhas_selecionadas)<kvalue):
+  while(len(linhas_selecionadas) < kvalue):
     linhas_selecionadas.append(random.randrange(0, total_elementos))
     linhas_selecionadas = list(set(linhas_selecionadas))
+  
+  # inicialmente os objetos não estão em nenhum cluster (representado por -1)
   centroides = [data.loc[idx] for idx in linhas_selecionadas]
   data['cluster'] = [-1 for _ in range(total_elementos)]
+
   # inicializar os critérios de parada
   limite_convergencia = int(total_elementos*parada_convergencia)
   iteracao_corrente = 0
@@ -27,6 +31,8 @@ def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0)
     for idx,elemento in data.iterrows():
       distancias = [distancia_euclidiana(elemento[:-1], centroide) for centroide in centroides]
       centroide_mais_proximo = distancias.index(min(distancias))
+
+      # elemento trocou de cluster
       if (elemento['cluster'] != centroide_mais_proximo):
         numero_objetos_alterados += 1
         data.loc[idx, 'cluster'] = centroide_mais_proximo
@@ -43,13 +49,10 @@ def calcula_cluster(data=None, kvalue=2 ,n_iteracoes=100, parada_convergencia=0)
       centroides[idx] = aux.mean()
     
     iteracao_corrente += 1
+  
   return data['cluster']
 
 def distancia_euclidiana(x,y):
-  # o indice da linha dos dois objetos será 0
-  x = x.reset_index(drop=True)
-  y = y.reset_index(drop=True)
-
   n = x.shape[0]   # n atributos (colunas)
   somatorio = 0
 
@@ -88,8 +91,8 @@ def main():
   # seleciona k linhas aleatórias
   if(qtd_linhas < args.kvalue):
     raise ValueError('O número de clusters não pode ser menor que o de objetos')
-  separacao_cluster = calcula_cluster(data=in_df, kvalue=args.kvalue)
   
+  separacao_cluster = calcula_cluster(data=in_df, kvalue=args.kvalue)
   write_file(separacao_cluster, args.nome_arquivo_saida)
 
 main()
