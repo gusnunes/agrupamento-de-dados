@@ -88,7 +88,7 @@ def main():
   qtd_linhas, qtd_colunas = in_df.shape
   in_df.columns = [int(indice) for indice in range(0,qtd_colunas)]
 
-  # seleciona k linhas aleatórias
+  # verifica se o database possui pelo menos k elementos
   if(qtd_linhas < args.kvalue):
     raise ValueError('O número de clusters não pode ser menor que o de objetos')
   
