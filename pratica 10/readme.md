@@ -1,0 +1,1 @@
+como rodar: python main.py -i teste.csv -s ',' -c False
