@@ -7,6 +7,12 @@ def write_file(out_df, nome_arquivo_saida):
   out_df.to_csv(nome_arquivo_saida, header=False,index=False)
   print("O resultado foi gravado no arquivo", nome_arquivo_saida)
 
+def set_groups(in_df, out_df):
+  in_df['cluster'] = np.zeros(in_df.shape[0], dtype=int)
+  for index in range(in_df.shape[0]):
+    in_df.loc[index, 'cluster'] = out_df[index]
+  return in_df 
+
 def print_columns(df):
   groups = len(df.unique())
   print(f"\nGroups = {groups}")
@@ -80,7 +86,7 @@ def main():
   parser.add_argument("-k", "--kclusters", dest='kvalue', help="Número de clusters", required=True, type=int)
   parser.add_argument("-s", "--separador", dest='separador', help="Separador de colunas", default=',')
   parser.add_argument("-c", "--cabecalho", dest='cabecalho', help="Indica se o arquivo possui cabeçalho [True, False]", default='True', choices=['True', 'False'])
-  parser.add_argument("-o", "--output", dest='nome_arquivo_saida', help="Arquivo de saída", default='resultado.csv')
+  parser.add_argument("-o", "--output", dest='nome_arquivo_saida', help="Arquivo de saída", default='resultado_k_means.csv')
   args = parser.parse_args()
   
   arquivo = args.arquivo
@@ -101,6 +107,7 @@ def main():
     raise ValueError('O número de clusters não pode ser menor que o de objetos')
   
   separacao_cluster = calcula_cluster(data=in_df, kvalue=args.kvalue)
-  #write_file(separacao_cluster, args.nome_arquivo_saida)
+  out_df = set_groups(in_df, separacao_cluster)
+  write_file(out_df, args.nome_arquivo_saida)
 
 main()

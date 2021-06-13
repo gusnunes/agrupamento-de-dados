@@ -10,6 +10,16 @@ def print_columns(df):
   for g in df.columns:
     print(f"[{g}] -> {len(str(g).split(','))} elements")
 
+def write_file(out_df, nome_arquivo_saida):
+  out_df.to_csv(nome_arquivo_saida, header=False,index=False)
+  print("O resultado foi gravado no arquivo", nome_arquivo_saida)
+
+def set_groups(in_df, out_df):
+  in_df['cluster'] = np.zeros(in_df.shape[0], dtype=int)
+  for idx, group in enumerate(out_df.columns):
+    indexes = [int(i) for i in str(group).split(',')]
+    in_df.loc[indexes, 'cluster'] = idx
+  return in_df 
 
 def distancia_euclidiana(x,y):
   # o indice da linha dos dois objetos será 0
@@ -74,12 +84,14 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("-i", "--input", dest='arquivo', help="Arquivo de entrada", required=True)
   parser.add_argument("-s", "--separador", dest='separador', help="Separador de colunas", default=',')
-  parser.add_argument("-c", "--cabecalho", dest='cabecalho', help="Indica se o arquivo possui cabeçalho [True, False]", default='True', choices=['True', 'False'])
+  parser.add_argument("-c", "--cabecalho", dest='cabecalho', help="Indica se o arquivo possui cabeçalho [True, False]", default='True', choices=['True', 'False'])  
+  parser.add_argument("-k", "--kclusters", dest='kvalue', help="Número de clusters de parada", required=False, type=int, default=0)
+  parser.add_argument("-o", "--output", dest='nome_arquivo_saida', help="Arquivo de saída", default='resultado_single_link.csv')
   args = parser.parse_args()
   
   arquivo = args.arquivo
   possui_cabecalho = 0 if (args.cabecalho == 'True') else None
-  
+
   # DataFrame de entrada com os objetos
   in_df = pd.read_csv(arquivo, header=possui_cabecalho)
   
@@ -94,9 +106,10 @@ def main():
   out_df = pd.DataFrame(index=np.arange(qtd_linhas), columns=np.arange(qtd_linhas))
   calcula_matriz_distancia(in_df, out_df, qtd_linhas)
   print_columns(out_df)
-  while(len(out_df.columns) > 1):
+  while(len(out_df.columns) > args.kvalue+1):
     out_df = select_min_reduce(out_df)
     print_columns(out_df)
-
+  in_df = set_groups(in_df, out_df)
+  write_file(in_df, args.nome_arquivo_saida)
 
 main()
