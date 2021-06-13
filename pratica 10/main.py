@@ -4,9 +4,12 @@ import argparse
 import pandas as pd
 import numpy as np
 
-def print_matrix(mat):
-  for i in mat:
-    print(i)
+def print_columns(df):
+  groups = len(df.columns)
+  print(f"\nGroups = {groups}")
+  for g in df.columns:
+    print(f"[{g}] -> {len(str(g).split(','))} elements")
+
 
 def distancia_euclidiana(x,y):
   # o indice da linha dos dois objetos será 0
@@ -90,10 +93,10 @@ def main():
   # DataFrame de saida (conterá a matriz de distancias)
   out_df = pd.DataFrame(index=np.arange(qtd_linhas), columns=np.arange(qtd_linhas))
   calcula_matriz_distancia(in_df, out_df, qtd_linhas)
-  print(out_df)
+  print_columns(out_df)
   while(len(out_df.columns) > 1):
     out_df = select_min_reduce(out_df)
-    print("\n\n\n")
-    print(out_df)
+    print_columns(out_df)
+
 
 main()
