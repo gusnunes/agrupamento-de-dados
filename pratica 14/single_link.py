@@ -11,7 +11,7 @@ def print_columns(df):
     print(f"[{g}] -> {len(str(g).split(','))} elements")
 
 def write_file(out_df, nome_arquivo_saida):
-  out_df.to_csv(nome_arquivo_saida, header=False,index=False)
+  out_df.to_csv(nome_arquivo_saida, header=True,index=False)
   print("O resultado foi gravado no arquivo", nome_arquivo_saida)
 
 def set_groups(in_df, out_df):
@@ -85,7 +85,7 @@ def main():
   parser.add_argument("-i", "--input", dest='arquivo', help="Arquivo de entrada", required=True)
   parser.add_argument("-s", "--separador", dest='separador', help="Separador de colunas", default=',')
   parser.add_argument("-c", "--cabecalho", dest='cabecalho', help="Indica se o arquivo possui cabeçalho [True, False]", default='True', choices=['True', 'False'])  
-  parser.add_argument("-k", "--kclusters", dest='kvalue', help="Número de clusters de parada", required=False, type=int, default=0)
+  parser.add_argument("-k", "--kclusters", dest='kvalue', help="Número de clusters de parada", required=False, type=int, default=1)
   parser.add_argument("-o", "--output", dest='nome_arquivo_saida', help="Arquivo de saída", default='resultado_single_link.csv')
   args = parser.parse_args()
   
@@ -106,9 +106,10 @@ def main():
   out_df = pd.DataFrame(index=np.arange(qtd_linhas), columns=np.arange(qtd_linhas))
   calcula_matriz_distancia(in_df, out_df, qtd_linhas)
   print_columns(out_df)
-  while(len(out_df.columns) > args.kvalue+1):
+  while(len(out_df.columns) > args.kvalue):
     out_df = select_min_reduce(out_df)
     print_columns(out_df)
+  in_df = pd.read_csv(arquivo, header=possui_cabecalho)
   in_df = set_groups(in_df, out_df)
   write_file(in_df, args.nome_arquivo_saida)
 

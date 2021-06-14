@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def write_file(out_df, nome_arquivo_saida):
-  out_df.to_csv(nome_arquivo_saida, header=False,index=False)
+  out_df.to_csv(nome_arquivo_saida, header=True,index=False)
   print("O resultado foi gravado no arquivo", nome_arquivo_saida)
 
 def set_groups(in_df, out_df):
@@ -96,17 +96,17 @@ def main():
   in_df = pd.read_csv(arquivo, header=possui_cabecalho)
   
   # remove as colunas não numéricas
-  in_df = in_df.select_dtypes(['number'])   
+  out_df = in_df.select_dtypes(['number']).copy()
 
   # reorganiza os indices das colunas (serão números inteiros)
-  qtd_linhas, qtd_colunas = in_df.shape
-  in_df.columns = [int(indice) for indice in range(0,qtd_colunas)]
+  qtd_linhas, qtd_colunas = out_df.shape
+  out_df.columns = [int(indice) for indice in range(0,qtd_colunas)]
 
   # verifica se o database possui pelo menos k elementos
   if(qtd_linhas < args.kvalue):
     raise ValueError('O número de clusters não pode ser menor que o de objetos')
   
-  separacao_cluster = calcula_cluster(data=in_df, kvalue=args.kvalue)
+  separacao_cluster = calcula_cluster(data=out_df, kvalue=args.kvalue)
   out_df = set_groups(in_df, separacao_cluster)
   write_file(out_df, args.nome_arquivo_saida)
 
